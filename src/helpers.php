@@ -15,3 +15,52 @@ if (!function_exists('php_get_architecture')) {
         return "x{$architecture}";
     }
 }
+
+if (!function_exists('php_get_content')) {
+    function php_get_content($url)
+    {
+        $opts = [
+            'http' => [
+                'method' => 'GET',
+                'header' => 'User-Agent: php-get'
+            ]
+        ];
+
+        $context = stream_context_create($opts);
+        return file_get_contents($url, false, $context);
+    }
+}
+
+if (!function_exists('clean_non_dll')) {
+    function clean_non_dll($directory, $ignore = false)
+    {
+        $files = glob("{$directory}/*");
+
+        foreach ($files as $file) {
+            if (is_dir($file)) {
+                clean_non_dll($file);
+            } elseif (strpos(basename($file), '.dll') === false) {
+                unlink($file);
+            }
+        }
+        if (!$ignore) {
+            rmdir($directory);
+        }
+    }
+}
+
+if (!function_exists('get_ext_dll')) {
+    function get_ext_dll($extension)
+    {
+        $files = glob("ext/{$extension}/*");
+
+        $extension_file = null;
+        for ($i = 0; $i < count($files) && !$extension_file; $i++) {
+            $file = $files[$i];
+            if (strpos(basename($file), '.dll') !== false) {
+                $extension_file = $file;
+            }
+        }
+        return $extension_file;
+    }
+}

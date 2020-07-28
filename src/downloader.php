@@ -2,15 +2,7 @@
 
 if (!function_exists('php_get_fetch')) {
     function php_get_fetch($base_uri, $searched_text) {
-        $opts = [
-            'http' => [
-                'method' => 'GET',
-                'header' => "User-Agent: php-get"
-            ]
-        ];
-
-        $context = stream_context_create($opts);
-        $content = file_get_contents($base_uri, false, $context);
+        $content = php_get_content($base_uri);
 
         $dom = new DOMDocument();
         $dom->loadHTML($content);
