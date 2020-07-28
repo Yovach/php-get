@@ -1,1 +1,4 @@
 packages.json
+.idea
+app.phar
+app.phar.gz
