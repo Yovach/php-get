@@ -1,4 +1,5 @@
 packages.json
+src/packages.json
 .idea
 app.phar
 app.phar.gz
