@@ -1,7 +1,7 @@
 <?php
 
 // The php.ini setting phar.readonly must be set to 0
-$pharFile = 'app.phar';
+$pharFile = './output/app.phar';
 
 // clean up
 if (file_exists($pharFile)) {
