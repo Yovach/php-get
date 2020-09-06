@@ -2,6 +2,7 @@ packages.json
 src/packages.json
 tmp/*
 ext/*
+!ext/.gitkeep
 .idea
 app.phar
 app.phar.gz

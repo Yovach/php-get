@@ -23,10 +23,18 @@ $extension = isset($argv[1]) ? $argv[1] : null;
 $ext_path = isset($argv[2]) ? $argv[2] : null;
 if ($extension) {
     try {
-        $versions = php_get_fetch($src . '/' . $extension . '/', '/releases/' . $extension);
+        $versions = [];
+        try {
+            $versions = php_get_fetch($src . '/' . $extension . '/', '/releases/' . $extension);
+        } catch (Exception $extension) {
+            die('Invalid extension specified.');
+        }
+
         if (count($versions) === 0) {
             die('Invalid extension or no version available.');
         }
+
+        $latest_version = array_key_last($versions);
 
         $opts = [
             'http' => [
@@ -37,23 +45,31 @@ if ($extension) {
 
         $filtered = array_filter($versions, function ($k) {
             return $k !== "logs" && strpos($k, "rc") === false;
-        },ARRAY_FILTER_USE_KEY);
+        }, ARRAY_FILTER_USE_KEY);
 
         if (!is_dir('tmp')) {
             mkdir('tmp');
         }
 
-        echo 'Downloading extension..' . PHP_EOL;
-        file_put_contents("tmp/redis.zip", php_get_content($src . "/redis/5.3.1/php_redis-5.3.1-7.4-ts-vc15-x64.zip"));
+        $content = php_get_content($src . "/$extension/$latest_version/php_$extension-$latest_version-$php_version-$ts-vc15-$architecture.zip");
+
+        log_info('Downloading extension..');
+        file_put_contents("tmp/$extension.zip", $content);
         $zip_obj = new ZipArchive();
-        $zip_obj->open('tmp/redis.zip');
+        $zip_obj->open("tmp/$extension.zip");
         $zip_obj->extractTo('ext/' . $extension);
 
         clean_non_dll("ext/{$extension}/", true);
-        echo "Directory 'ext/{$extension}' cleaned." . PHP_EOL;
+
+        log_info("The \"$extension\" extension has been downloaded.");
+        log_info('');
+        log_info("Now follow these steps :");
+        // echo "Directory 'ext/{$extension}' cleaned." . PHP_EOL;
+
+        log_info("1. Copy the .dll file located in the \"ext/$extension\" folder at the root of the project to the \"ext\" folder located in the PHP extensions folder.");
+        log_info("2. Please add \"extension=$extension\" at the end of php.ini");
 
         $dll_file = get_ext_dll($extension);
-        var_dump($dll_file);
     } catch (Exception $exception)  {
         die($exception->getMessage());
     }

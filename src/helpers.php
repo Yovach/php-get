@@ -64,3 +64,11 @@ if (!function_exists('get_ext_dll')) {
         return $extension_file;
     }
 }
+
+if (!function_exists('log_info')) {
+    function log_info($message)
+    {
+        echo $message;
+        echo PHP_EOL;
+    }
+}
